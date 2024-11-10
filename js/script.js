@@ -11,22 +11,21 @@ var markers = L.markerClusterGroup();
 
 // Load the noise complaints data
 d3.json("data/loud-noise-chapel-hill.json").then(function(data) {
-    console.log("Data loaded:", data); // Log data to verify it's loaded correctly
-
+    console.log("Total complaints loaded:", data.length);
+    console.log("Date range:", d3.extent(data, d => new Date(d.Date_of_Occurrence)));
+    
+    // Map markers (existing code)
     data.forEach(function(d) {
         if (d.Latitude && d.Longitude) {
             var marker = L.marker([d.Latitude, d.Longitude])
-                .bindPopup(`Date: ${d.Date_of_Occurrence}<br>Location: ${d.Street}<br>Description: ${d.Offense}`);
+                .bindPopup(`Date: ${d.Date_of_Occurrence}<br>Location: ${d.Street}`);
             markers.addLayer(marker);
-        } else {
-            console.warn("Missing coordinates for data point:", d);
         }
     });
-
-    // Add the marker cluster group to the map
     map.addLayer(markers);
-}).catch(function(error) {
-    console.error('Error loading or processing data:', error);
+
+    // Initialize heatmap
+    initializeHeatmap(data);
 });
 
 // Handle scroll event to toggle header styles

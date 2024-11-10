@@ -1,203 +1,240 @@
-// Dimensions
-const margin = { top: 20, right: 30, bottom: 30, left: 50 };
-const width = 800 - margin.left - margin.right;
-const height = 400 - margin.top - margin.bottom;
-const gridSize = Math.floor(width / 24); // Adjust grid size
+const width = 960;
+const height = 500;
+const margin = { top: 50, right: 30, bottom: 30, left: 60 };
+const cellSize = 20;
 
-// SVG Canvas
-const svg = d3.select("#heatmap")
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+const color = d3.scaleQuantize()
+    .range(['#f7fbff', '#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#084594']);
 
-// Axes Labels
-const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const hours = d3.range(24);
+const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0)
+    .style("position", "absolute");
 
-// Scales
-const dayScale = d3.scaleBand().domain(days).range([0, height]).padding(0.01);
-const hourScale = d3.scaleBand().domain(hours).range([0, width]).padding(0.01);
-
-svg.append("g")
-    .call(d3.axisLeft(dayScale))
-    .selectAll(".tick text")
-    .attr("class", "axis-label");
-
-svg.append("g")
-    .attr("transform", `translate(0, ${height})`)
-    .call(d3.axisBottom(hourScale))
-    .selectAll(".tick text")
-    .attr("class", "axis-label");
-
-// Color Scale
-const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, d3.max(noiseData.values(), d => d3.max(d.values()))]);
-
-// Flatten the heatmap data for rendering
-const heatmapArray = [];
-noiseData.forEach((hourMap, day) => {
-    hourMap.forEach((count, hour) => {
-        heatmapArray.push({ day, hour, count });
-    });
-});
-
-svg.selectAll(".heatmap-rect")
-    .data(heatmapArray)
-    .enter()
-    .append("rect")
-    .attr("x", d => hourScale(d.hour))
-    .attr("y", d => dayScale(days[d.day]))
-    .attr("width", hourScale.bandwidth())
-    .attr("height", dayScale.bandwidth())
-    .attr("class", "heatmap-rect")
-    .style("fill", d => colorScale(d.count || 0));
-
-const tooltip = d3.select("body").append("div")
-    .style("position", "absolute")
-    .style("visibility", "hidden")
-    .style("background", "#fff")
-    .style("border", "1px solid #ccc")
-    .style("padding", "5px")
-    .style("border-radius", "3px");
-
-svg.selectAll(".heatmap-rect")
-    .on("mouseover", (event, d) => {
-        tooltip.html(`Day: ${days[d.day]}<br>Hour: ${d.hour}<br>Count: ${d.count}`)
-            .style("left", `${event.pageX + 5}px`)
-            .style("top", `${event.pageY - 28}px`)
-            .style("visibility", "visible");
-    })
-    .on("mouseout", () => {
-        tooltip.style("visibility", "hidden");
-    });
-
-// Load and process the data
-d3.json('data/loud-noise-chapel-hill.json').then(function(data) {
-    console.log("Raw data loaded:", data);
+function initializeHeatmap(data) {
+    // Parse dates correctly
+    const parseDate = d3.timeParse("%Y/%m/%d %H:%M:%S+00");
     
-    var parseDate = d3.timeParse("%Y/%m/%d %H:%M:%S+00"); // Update date format
-    var noiseData = {};
-
-    data.forEach(function(d) {
-        console.log("Processing date:", d.Date_of_Occurrence);
-        var date = parseDate(d.Date_of_Occurrence);
-        if (!date) {
-            console.warn("Failed to parse date:", d.Date_of_Occurrence);
-            return;
-        }
-        var day = d3.timeFormat("%Y-%m-%d")(date);
-        noiseData[day] = (noiseData[day] || 0) + 1;
+    // Group data by date
+    const dateGroups = d3.group(data, d => {
+        const date = parseDate(d.Date_of_Occurrence);
+        return d3.timeFormat("%Y-%m-%d")(date);
     });
 
-    console.log("Processed data:", noiseData);
-
-    var years = Array.from(new Set(Object.keys(noiseData).map(function(d) {
-        return new Date(d).getFullYear();
-    })));
-
-    // Populate the year selection dropdown
-    d3.select("#year-select")
-        .selectAll("option.year-option")
-        .data(years)
-        .enter()
+    // Create full date range with zeros
+    const dateExtent = d3.extent(data, d => parseDate(d.Date_of_Occurrence));
+    const allDates = d3.timeDays(dateExtent[0], dateExtent[1]);
+    
+    // Create year groups
+    const yearGroups = d3.group(allDates, d => d.getFullYear());
+    
+    // Setup year selector
+    const yearSelect = d3.select("#year-select");
+    yearSelect.selectAll("option").remove();
+    
+    yearSelect
         .append("option")
-        .attr("class", "year-option")
-        .attr("value", function(d) { return d; })
-        .text(function(d) { return d; });
-
-    // Draw the initial heatmap with all years
-    drawCalendarHeatmap(noiseData, years);
-
-    // Update heatmap on year selection
-    d3.select("#year-select").on("change", function() {
-        var selectedYear = this.value;
-        if (selectedYear === "all") {
-            drawCalendarHeatmap(noiseData, years);
-        } else {
-            var filteredData = {};
-            Object.keys(noiseData).forEach(function(date) {
-                if (new Date(date).getFullYear() == selectedYear) {
-                    filteredData[date] = noiseData[date];
-                }
-            });
-            drawCalendarHeatmap(filteredData, [selectedYear]);
-        }
+        .attr("value", "all")
+        .text("All Years");
+        
+    Array.from(yearGroups.keys()).sort().forEach(year => {
+        yearSelect
+            .append("option")
+            .attr("value", year)
+            .text(year);
     });
-});
 
-// Heatmap drawing function
-function drawCalendarHeatmap(data, years) {
-    // Clear previous heatmap
-    d3.select("#heatmap").selectAll("*").remove();
+    function updateHeatmap(selectedYear) {
+        const svg = d3.select("#heatmap")
+            .selectAll("svg")
+            .data([null])
+            .join("svg")
+            .attr("width", width)
+            .attr("height", height);
 
-    var cellSize = 20;
-    var width = 960;
-    var height = (cellSize * 7 + 20) * years.length;
+        svg.selectAll("*").remove();
 
-    var svg = d3.select("#heatmap")
+        const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Filter data for selected year
+        const filteredDates = selectedYear === "all" 
+            ? allDates 
+            : allDates.filter(d => d.getFullYear() === +selectedYear);
+
+        // Create month x day matrix
+        const monthDayMatrix = Array(12).fill().map(() => Array(31).fill(0));
+        
+        filteredDates.forEach(date => {
+            const dateStr = d3.timeFormat("%Y-%m-%d")(date);
+            const count = dateGroups.get(dateStr)?.length || 0;
+            monthDayMatrix[date.getMonth()][date.getDate() - 1] = count;
+        });
+
+        // Update color scale
+        const maxCount = d3.max(monthDayMatrix.flat());
+        color.domain([0, maxCount]);
+
+        // Create cells
+        const months = d3.range(12);
+        const days = d3.range(31);
+
+        const cellWidth = (width - margin.left - margin.right) / 31;
+        const cellHeight = (height - margin.top - margin.bottom) / 12;
+
+        // Add month labels
+        g.selectAll(".month-label")
+            .data(months)
+            .join("text")
+            .attr("class", "month-label")
+            .attr("x", -10)
+            .attr("y", d => (d + 0.5) * cellHeight)
+            .attr("text-anchor", "end")
+            .attr("alignment-baseline", "middle")
+            .text(d => d3.timeFormat("%b")(new Date(2000, d, 1)));
+
+        // Add day labels
+        g.selectAll(".day-label")
+            .data(days)
+            .join("text")
+            .attr("class", "day-label")
+            .attr("x", d => (d + 0.5) * cellWidth)
+            .attr("y", -5)
+            .attr("text-anchor", "middle")
+            .text(d => d + 1);
+
+        // Add heatmap cells
+        monthDayMatrix.forEach((month, i) => {
+            month.forEach((value, j) => {
+                g.append("rect")
+                    .attr("x", j * cellWidth)
+                    .attr("y", i * cellHeight)
+                    .attr("width", cellWidth - 1)
+                    .attr("height", cellHeight - 1)
+                    .attr("fill", color(value))
+                    .on("click", function(event) {
+                        // Hide any existing visible tooltip
+                        tooltip.style("opacity", 0);
+                        
+                        tooltip
+                            .style("opacity", 1)
+                            .html(`${d3.timeFormat("%B")(new Date(2000, i, 1))} ${j + 1}<br/>${value} complaints`)
+                            .style("left", (event.pageX + 10) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                        
+                        event.stopPropagation();
+                    });
+            });
+        });
+    }
+
+    // Initial render and update on selection
+    yearSelect.on("change", function() {
+        updateHeatmap(this.value);
+    });
+    updateHeatmap("all");
+}
+
+// Data processing function
+function processHeatmapData(data) {
+    // Group complaints by date
+    const dateFormat = d3.timeFormat("%Y-%m-%d");
+    const counts = d3.rollup(
+        data,
+        v => v.length,
+        d => dateFormat(new Date(d.Date_of_Occurrence))
+    );
+    
+    return counts;
+}
+
+// Heatmap creation function
+function createHeatmap(data) {
+    const width = 960;
+    const height = 136;
+    const cellSize = 10;
+    const padding = 40;
+
+    // GitHub-style colors
+    const color = d3.scaleQuantize()
+        .domain([0, d3.max(Array.from(data.values()))])
+        .range(['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39']);
+
+    // Create SVG
+    const svg = d3.select("#heatmap")
         .append("svg")
         .attr("width", width)
         .attr("height", height);
 
-    var color = d3.scaleLinear()
-        .domain([0, d3.max(Object.values(data))])
-        .range(["#eee", "#d73027"]);
+    const g = svg.append("g")
+        .attr("transform", `translate(${padding}, ${padding})`);
 
-    years.forEach(function(year, i) {
-        var yearData = {};
-        Object.keys(data).forEach(function(date) {
-            if (new Date(date).getFullYear() == year) {
-                yearData[date] = data[date];
-            }
-        });
-
-        var yearGroup = svg.append("g")
-            .attr("transform", "translate(40," + ((cellSize * 7 + 20) * i) + ")");
-
-        yearGroup.append("text")
-            .attr("transform", "translate(-40," + cellSize * 3.5 + ")rotate(-90)")
-            .attr("text-anchor", "middle")
-            .text(year);
-
-        var days = d3.timeDays(new Date(year, 0, 1), new Date(year + 1, 0, 1));
-
-        var rect = yearGroup.selectAll(".day")
-            .data(days)
-            .enter().append("rect")
-            .attr("class", "day")
-            .attr("width", cellSize)
-            .attr("height", cellSize)
-            .attr("x", function(d) { return d3.timeWeek.count(d3.timeYear(d), d) * cellSize; })
-            .attr("y", function(d) { return d.getDay() * cellSize; })
-            .datum(function(d) { return d3.timeFormat("%Y-%m-%d")(d); })
-            .attr("fill", function(d) { return data[d] ? color(data[d]) : "#fff"; });
-
-        rect.append("title")
-            .text(function(d) { return d + ": " + (data[d] || 0) + " complaints"; });
-    });
-
-    // Add legend
-    var legend = svg.append("g")
-        .attr("transform", "translate(40," + (height - 50) + ")");
-
-    var legendData = [0, 1, 2, 3, 4, 5];
-
-    legend.selectAll("rect")
-        .data(legendData)
-        .enter()
-        .append("rect")
-        .attr("x", function(d, i) { return i * 30; })
-        .attr("width", 30)
-        .attr("height", 10)
-        .attr("fill", function(d) { return color(d); });
-
-    legend.selectAll("text")
-        .data(legendData)
+    // Add days
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    g.selectAll(".day")
+        .data(days)
         .enter()
         .append("text")
-        .attr("x", function(d, i) { return i * 30 + 15; })
-        .attr("y", 25)
-        .attr("text-anchor", "middle")
-        .text(function(d) { return d; });
+        .attr("class", "day-label")
+        .attr("x", -10)
+        .attr("y", (d, i) => i * cellSize + cellSize/2)
+        .style("text-anchor", "end")
+        .text(d => d);
+
+    // Create cells
+    const now = new Date();
+    const year = d3.timeYear(now);
+    const dates = d3.timeDays(year, d3.timeYear.ceil(now));
+
+    g.selectAll(".cell")
+        .data(dates)
+        .enter()
+        .append("rect")
+        .attr("class", "cell")
+        .attr("width", cellSize - 1)
+        .attr("height", cellSize - 1)
+        .attr("x", d => d3.timeWeek.count(year, d) * cellSize)
+        .attr("y", d => d.getDay() * cellSize)
+        .attr("fill", d => {
+            const key = d3.timeFormat("%Y-%m-%d")(d);
+            return color(data.get(key) || 0);
+        })
+        .append("title")
+        .text(d => {
+            const key = d3.timeFormat("%Y-%m-%d")(d);
+            return `${d3.timeFormat("%B %d, %Y")(d)}: ${data.get(key) || 0} complaints`;
+        });
+
+    // Add months
+    const months = d3.timeMonths(year, d3.timeYear.ceil(now));
+    g.selectAll(".month")
+        .data(months)
+        .enter()
+        .append("text")
+        .attr("class", "month-label")
+        .attr("x", d => d3.timeWeek.count(year, d) * cellSize)
+        .attr("y", -5)
+        .text(d => d3.timeFormat("%b")(d));
 }
+
+// Update the data loading section
+d3.json("data/loud-noise-chapel-hill.json").then(function(data) {
+    // Create map markers
+    data.forEach(function(d) {
+        if (d.Latitude && d.Longitude) {
+            var marker = L.marker([d.Latitude, d.Longitude])
+                .bindPopup(`Date: ${d.Date_of_Occurrence}<br>Location: ${d.Street}`);
+            markers.addLayer(marker);
+        }
+    });
+    map.addLayer(markers);
+
+    // Create heatmap
+    const heatmapData = processHeatmapData(data);
+    createHeatmap(heatmapData);
+});
+
+d3.select("body").on("click", () => {
+    tooltip.style("opacity", 0);
+});
