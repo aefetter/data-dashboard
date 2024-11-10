@@ -345,3 +345,58 @@ select {
     padding: 5px;
     font-size: 14px;
 }
+
+/* radial chart styling */
+#radial-chart {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 200px;
+    position: relative;
+}
+
+.radial-tooltip {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: absolute;
+    background-color: white;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    pointer-events: none;
+    font-size: 12px;
+    z-index: 1000;
+}
+
+.radial-axis text {
+    font-size: 10px;
+}
+
+.radial-chart-tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+/* General chart container styling */
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin: 40px 0;
+}
+
+/* Specific chart styling */
+#heatmap, #radial-chart, #map-container {
+    width: 100%;
+    /* max-width: 800px; */
+    max-height: 70%;
+    height: auto;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}

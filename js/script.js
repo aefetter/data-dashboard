@@ -26,6 +26,9 @@ d3.json("data/loud-noise-chapel-hill.json").then(function(data) {
 
     // Initialize heatmap
     initializeHeatmap(data);
+
+    // Create the radial chart
+    createRadialChart(data);
 });
 
 // Handle scroll event to toggle header styles
