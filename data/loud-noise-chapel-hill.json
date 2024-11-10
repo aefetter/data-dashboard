@@ -749,31 +749,7 @@
    "ObjectId": 981,
    "FIELD23": ""
  },
- {
-   "X": -8795720.322,
-   "Y": 4292462.923,
-   "Incident_ID": 74387,
-   "Agency": "CHPD",
-   "Offense": "LOUD MUSIC/PARTY",
-   "Street": "190 FORSYTHIA CT",
-   "City": "CHAPEL HILL",
-   "State": "NC",
-   "Zipcode": "27514",
-   "Date_of_Report": "2010/01/14 22:50:00+00",
-   "Date_of_Occurrence": "2009/12/27 00:35:00+00",
-   "Date_Found": "2009/12/27 00:35:00+00",
-   "Reported_As": "<Null>",
-   "Premise_Description": "HOME OF OFFENDER - OTHER DWELL",
-   "Forcible": "N",
-   "Weapon_Description": "<Null>",
-   "Victim_Age": "<Null>",
-   "Victim_Race": "<Null>",
-   "Victim_Gender": "<Null>",
-   "Latitude": 35.940686,
-   "Longitude": -79.0133,
-   "ObjectId": 982,
-   "FIELD23": ""
- },
+
  {
    "X": -8800942.542,
    "Y": 4288646.592,

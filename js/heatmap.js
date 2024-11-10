@@ -3,8 +3,18 @@ const height = 500;
 const margin = { top: 50, right: 30, bottom: 30, left: 60 };
 const cellSize = 20;
 
+// Update color scale to Carolina blue palette
 const color = d3.scaleQuantize()
-    .range(['#f7fbff', '#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#084594']);
+    .range([
+        '#ffffff',  // White
+        '#edf3f7',  // Lightest Carolina blue
+        '#c3d5e6',  // Light Carolina blue
+        '#99b7d5',  // Medium light Carolina blue
+        '#6f99c4',  // Medium Carolina blue
+        '#4479B3',  // Carolina blue
+        '#13294B',  // Navy blue
+        '#001141'   // Darkest navy
+    ]);
 
 const tooltip = d3.select("body")
     .append("div")
@@ -63,14 +73,28 @@ function initializeHeatmap(data) {
             ? allDates 
             : allDates.filter(d => d.getFullYear() === +selectedYear);
 
-        // Create month x day matrix
-        const monthDayMatrix = Array(12).fill().map(() => Array(31).fill(0));
-        
-        filteredDates.forEach(date => {
-            const dateStr = d3.timeFormat("%Y-%m-%d")(date);
-            const count = dateGroups.get(dateStr)?.length || 0;
-            monthDayMatrix[date.getMonth()][date.getDate() - 1] = count;
-        });
+        // Create month x day matrix, so that it properly sums the count of all noise complaints
+        let monthDayMatrix;
+        if (selectedYear === "all") {
+            // Initialize matrix
+            monthDayMatrix = Array(12).fill().map(() => Array(31).fill(0));
+            
+            // Sum across all years for each month/day combination
+            data.forEach(d => {
+                const date = parseDate(d.Date_of_Occurrence);
+                const month = date.getMonth();
+                const day = date.getDate() - 1;
+                monthDayMatrix[month][day]++;
+            });
+        } else {
+            monthDayMatrix = Array(12).fill().map(() => Array(31).fill(0));
+            
+            filteredDates.forEach(date => {
+                const dateStr = d3.timeFormat("%Y-%m-%d")(date);
+                const count = dateGroups.get(dateStr)?.length || 0;
+                monthDayMatrix[date.getMonth()][date.getDate() - 1] = count;
+            });
+        }
 
         // Update color scale
         const maxCount = d3.max(monthDayMatrix.flat());
