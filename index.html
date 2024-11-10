@@ -40,9 +40,18 @@
             <div class="photo-credit">photo courtesy of <em>The Daily Tar Heel</em> (April 3, 2022)</div>
         </div>
     </div>
-    <div id="story-contents"></div>
+    <div id="story-contents">
         <div id="map-container">
+            <h2>Map of Noise Complaints Chapel Hill</h2>
             <div id="map"></div>
+        </div>
+        <div id="calendar-heatmap">
+            <h2>Calendar Heat Map of Noise Complaints</h2>
+            <!-- Year selection dropdown -->
+            <select id="year-select">
+                <option value="all">All Years</option>
+            </select>
+            <div id="heatmap"></div>
         </div>
         <div id="author-info">
         <div class="author-photo">
@@ -65,6 +74,7 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="js/heatmap.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>

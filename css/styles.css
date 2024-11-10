@@ -1,15 +1,16 @@
 /* prompted copilot for a style guide that would make this page look like The New Yorker */
 /* map 1 */
 #map {
-    height: 400px;
-    width: 80%;
+    height: 600px;
+    width: 100%;
 }
 
-#map-container {
+/* #map-container {
     display: flex;
+    direction: column;
     justify-content: center;
     padding: 20px;
-}
+} */
 
 /* Typography */
 body {
@@ -155,6 +156,11 @@ img {
     font-size: 1em;
 }
 
+/* main story styling */
+#story-contents{
+    width: 80%;
+    margin: 0 auto; /*centers content*/
+}
 /* author section */
 #author-info {
     display: flex;
@@ -262,4 +268,18 @@ footer p {
 
 #main-header.scrolled nav {
     display: flex;
+}
+
+
+/* heatmap styling */
+.day {
+    stroke: #ccc;
+}
+.year-label {
+    font-size: 14px;
+}
+#heatmap {
+    width: 100%;
+    min-height: 200px;
+    margin: 20px 0;
 }
