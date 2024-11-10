@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heatmap of Noise Complaints</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header id="main-header">
+        <div class="header-container">
+            <div class="logo">The New Carolinian</div>
+            <div class="search-bar">
+                <i class="fa fa-search"></i>
+            </div>
+            <nav>
+                <a href="#">News</a>
+                <a href="#">Culture</a>
+                <a href="#">Humor</a>
+                <a href="#">Magazine</a>
+                <a href="#">Video</a>
+                <a href="#">Data</a>
+            </nav>
+        </div>
+    </header>
+    <div id="hero-container">
+        <div class="hero-title">
+            <h1>Unsurprisingly, most of Chapel Hill's noise complaints & open container violations occur at night, near students</h1>
+            <div id="byline">
+                <h3>by <em>Anna Fetter</em></h3>
+                <p>November 10, 2024</p>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="img/unc-duke-final-four-franklin-2022.jpg" alt="A photo of students on Franklin Street after UNC beat Duke in 2022 in the college Basketball Final Four.">
+            <div class="photo-credit">photo courtesy of <em>The Daily Tar Heel</em> (April 3, 2022)</div>
+        </div>
+    </div>
+    <div id="story-contents"></div>
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+        <div id="author-info">
+        <div class="author-photo">
+            <img src="img/AnnaFetter.jpeg" alt="Author Photo">
+        </div>
+        <div class="author-details">
+            <h2>by <strong>Anna Fetter</strong></h2>
+            <p><em>student in MEJO487, fall 2024</em></p>
+            <p>
+                <a href="https://www.linkedin.com/in/anna-fetter" target="_blank">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+                <a href="https://github.com/aefetter" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </p>
+        </div>
+        </div>
+    </div>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
