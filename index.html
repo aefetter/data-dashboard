@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
@@ -58,7 +61,21 @@
             <h2>Radial Time Chart of Noise Complaints</h2>
             <div id="radial-chart"></div>
         </div>
-        <div id="author-info">
+        <div id="tabular-data-full">
+            <h2>All Noise Complaints Data</h2>
+            <table id="myTable" class="display table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div id="author-info">
         <div class="author-photo">
             <img src="img/AnnaFetter.jpeg" alt="Author Photo">
         </div>
@@ -73,7 +90,6 @@
                     <i class="fab fa-github"></i> GitHub
                 </a>
             </p>
-        </div>
         </div>
     </div>
     <script src="https://d3js.org/d3.v6.min.js"></script>

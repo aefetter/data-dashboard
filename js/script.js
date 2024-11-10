@@ -29,6 +29,9 @@ d3.json("data/loud-noise-chapel-hill.json").then(function(data) {
 
     // Create the radial chart
     createRadialChart(data);
+
+    // Populate complaints table
+    populateComplaintsTable(data);
 });
 
 // Handle scroll event to toggle header styles
@@ -39,4 +42,41 @@ window.addEventListener('scroll', function() {
     } else {
         header.classList.remove('scrolled');
     }
+});
+
+// adding the table
+let table = new DataTable('#table', {
+    // options
+});
+
+$(document).ready(function() {
+    // Load JSON data and initialize DataTable
+    $.getJSON("data/loud-noise-chapel-hill.json", function(data) {
+        $('#myTable').DataTable({
+            data: data,
+            columns: [
+                { 
+                    data: 'Date_of_Occurrence',
+                    render: function(data) {
+                        return new Date(data).toLocaleDateString();
+                    }
+                },
+                { 
+                    data: 'Date_of_Occurrence',
+                    render: function(data) {
+                        return new Date(data).toLocaleTimeString();
+                    }
+                },
+                { data: 'Street' },
+                { data: 'Offense' },
+            ],
+            order: [[0, 'desc']], // Sort by date descending
+            pageLength: 10,
+            responsive: true,
+            dom: '<"top"f>rt<"bottom"lip>',
+            language: {
+                search: "Filter records:"
+            }
+        });
+    });
 });
