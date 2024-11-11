@@ -479,12 +479,12 @@ select {
         margin: 1rem auto;
         display: block;
     }
-    #radial-chart {
+    /* #radial-chart {
         width: 95vw;
         max-width: 95vw;
         height: auto;
         margin: 0 auto;
-    }
+    } */
 
     #radial-chart svg {
         width: 100%;

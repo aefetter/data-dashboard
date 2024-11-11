@@ -1,20 +1,31 @@
+// Constants defined outside function
+const PADDING = 40;
+
 function createRadialChart(data) {
-    const width = 800;
-    const height = 800;
-    const margin = 100;
-    const innerRadius = 120;
-    const outerRadius = Math.min(width, height) / 2 - margin;
+    // Get viewport dimensions with padding
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) - PADDING;
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0) - PADDING;
+
+    // Set base dimensions
+    const size = Math.min(vw, vh); // Use smallest viewport dimension
+    const width = size;
+    const height = size;
+    const margin = size * 0.1; // Reduce margin to 10%
+    const innerRadius = size * 0.15;
+    const outerRadius = (size / 2) - margin;
 
     // Clear any existing chart
     d3.select("#radial-chart").selectAll("*").remove();
 
-    // Create centered SVG
+    // Create responsive SVG container
     const svg = d3.select("#radial-chart")
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .style("width", "100%")
+        .style("height", "auto")
+        .style("max-width", `${size}px`)
         .style("display", "block")
-        .style("margin", "40px auto")
+        .style("margin", "0 auto")
         .append("g")
         .attr("transform", `translate(${width/2},${height/2})`);
 
@@ -105,6 +116,45 @@ function createRadialChart(data) {
         .style("font-size", "12px")
         .style("fill", "#666");
 }
+
+// Add resize listener
+window.addEventListener('resize', () => {
+    // Recalculate dimensions
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    
+    const width = Math.min(vw * 0.8, 800);
+    const height = width;
+    const margin = width * 0.125;
+    const innerRadius = width * 0.15;
+    const outerRadius = Math.min(width, height) / 2 - margin;
+    
+    // Update chart (call your chart update function)
+    updateRadialChart();
+});
+
+// Add to your existing chart code
+function updateRadialChart() {
+    // Select existing SVG
+    const svg = d3.select("#radial-chart svg");
+    
+    // Update SVG dimensions
+    svg.attr("width", width)
+       .attr("height", height);
+    
+    // Update chart elements' positions and sizes
+    // ... update your existing chart elements
+}
+
+// Add resize handler using constant
+window.addEventListener('resize', () => {
+    const newVw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) - PADDING;
+    const newVh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0) - PADDING;
+    const newSize = Math.min(newVw, newVh);
+    
+    d3.select("#radial-chart svg")
+        .style("max-width", `${newSize}px`);
+});
 
 // Export the function
 window.createRadialChart = createRadialChart;
