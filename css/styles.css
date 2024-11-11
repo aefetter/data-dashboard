@@ -364,7 +364,7 @@ select {
 }
 
 /* Specific chart styling */
-#heatmap, #radial-chart, #map-container {
+#heatmap, #map-container {
     max-width: 100%;
     width: auto;
     /* max-width: 800px; */
@@ -376,6 +376,15 @@ select {
 }
 
 /* Radial chart styling */
+#radial-time-chart {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem auto;
+}
+
 #radial-chart {
     width: 100%;
     height: auto;
@@ -387,15 +396,8 @@ select {
     width: 100%;
     height: auto;
     display: block;
-}
-
-/* Ensure container fits */
-#radial-time-chart {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 2rem auto;
+    /* Ensure the SVG maintains aspect ratio */
+    preserveAspectRatio: xMidYMid meet;
 }
 
 /* media query for resposiveness */
@@ -481,7 +483,6 @@ select {
     #radial-chart svg {
         width: 100%;
         height: auto;
-        display: block;
     }
 
     /* Ensure container fits */
@@ -601,24 +602,18 @@ select {
         z-index: 1000;
     }
 
-    /* Mobile-specific adjustments */
-    @media screen and (max-width: 768px) {
-        #radial-chart {
-            width: 100%; /* Full width for mobile */
-            height: auto;
-            margin: 1rem auto;
-        }
+    #radial-time-chart {
+        margin: 1rem 0; /* Reduce margin to eliminate big gaps */
+    }
 
-        #radial-chart svg {
-            width: 100%;
-            height: auto;
-        }
+    #radial-chart {
+        width: 100%; /* Ensure full width on mobile */
+        margin: 1rem auto; /* Reduce margin */
+    }
 
-        /* Ensure no content is cropped */
-        .chart-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+    #radial-chart svg {
+        width: 100%;
+        height: auto;
     }
 }
 
