@@ -23,13 +23,11 @@ var markers = L.markerClusterGroup();
 
 // Load the noise complaints data
 d3.json("data/loud-noise-chapel-hill.json").then(function(data) {
-    console.log("Total complaints loaded:", data.length);
     console.log("Date range:", d3.extent(data, d => new Date(d.Date_of_Occurrence)));
     
     // Map markers
     data.forEach(function(d) {
         if (d.Latitude && d.Longitude) {
-            console.log("Adding marker for:", d.Date_of_Occurrence, d.Street);
             var marker = L.marker([d.Latitude, d.Longitude])
                 .bindPopup(`Date: ${d.Date_of_Occurrence}<br>Location: ${d.Street}`);
             markers.addLayer(marker);
