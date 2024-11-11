@@ -40,6 +40,8 @@ d3.json("data/loud-noise-chapel-hill.json").then(function(data) {
 
     // Create the radial chart
     createRadialChart(data);
+    //initialize top ten table
+    initializeTopTenTable(data);
 
     // Initialize DataTable
     $('#myTable').DataTable({
@@ -78,6 +80,32 @@ window.addEventListener('scroll', function() {
 let table = new DataTable('#table', {
     // options
 });
+
+// adding top 10 table 
+function initializeTopTenTable(data) {
+    // Aggregate data to count complaints per date
+    const dateCounts = d3.rollup(
+        data,
+        v => v.length,
+        d => d.Date_of_Occurrence.split(' ')[0] // Extract date part
+    );
+
+    // Convert the map to an array and sort by count descending
+    const sortedDateCounts = Array.from(dateCounts, ([date, count]) => ({ date, count }))
+        .sort((a, b) => d3.descending(a.count, b.count))
+        .slice(0, 10); // Get top 10 dates
+
+    // Initialize DataTable
+    $('#topTenTable').DataTable({
+        data: sortedDateCounts,
+        columns: [
+            { data: 'date', title: 'Date' },
+            { data: 'count', title: 'Number of Complaints' }
+        ],
+        order: [[1, 'desc']], // Sort by number of complaints descending
+        responsive: true
+    });
+}
 
 // function to make hamburger menu work
 document.querySelector('.header-container nav').addEventListener('click', function(e) {
