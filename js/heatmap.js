@@ -193,19 +193,6 @@ function createHeatmap(data) {
 
     const g = svg.append("g")
         .attr("transform", `translate(${padding}, ${padding})`);
-
-    // Add days
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    g.selectAll(".day")
-        .data(days)
-        .enter()
-        .append("text")
-        .attr("class", "day-label")
-        .attr("x", -10)
-        .attr("y", (d, i) => i * cellSize + cellSize/2)
-        .style("text-anchor", "end")
-        .text(d => d);
-
     // Create cells
     const now = new Date();
     const year = d3.timeYear(now);
@@ -243,7 +230,6 @@ function createHeatmap(data) {
 }
 
 // Update the data loading section
-d3.json("data/loud-noise-chapel-hill.json").then(function(data) {
     // Create map markers
     data.forEach(function(d) {
         if (d.Latitude && d.Longitude) {
@@ -257,7 +243,6 @@ d3.json("data/loud-noise-chapel-hill.json").then(function(data) {
     // Create heatmap
     const heatmapData = processHeatmapData(data);
     createHeatmap(heatmapData);
-});
 
 d3.select("body").on("click", () => {
     tooltip.style("opacity", 0);
