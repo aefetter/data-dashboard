@@ -392,7 +392,8 @@ select {
 
 /* Specific chart styling */
 #heatmap, #radial-chart, #map-container {
-    width: 100%;
+    max-width: 100%;
+    width: auto;
     /* max-width: 800px; */
     max-height: 70%;
     height: auto;
@@ -401,3 +402,134 @@ select {
     box-sizing: border-box;
 }
 
+/* media query for resposiveness */
+/* Add to styles.css */
+@media screen and (max-width: 768px) {
+    #hero-container {
+        flex-direction: column;
+    }
+
+    .hero-title {
+        width: 100%;
+        padding: 1rem;
+        order: 1;
+    }
+
+    .hero-image {
+        width: 100%;
+        order: 2;
+    }
+
+    .hero-title h1 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-image img {
+        width: 100%;
+        height: auto;
+    }
+    /* media query for heatmap */
+    #heatmap {
+        width: 90vw;
+        height: auto;
+        min-height: 600px; /* Ensure enough vertical space */
+        margin: 0 auto;
+        overflow-x: auto; /* Add horizontal scroll if needed */
+        overflow-y: visible; /* Show full height */
+        scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
+    }
+    /* making sure users know they can scroll */
+    #heatmap::-webkit-scrollbar {
+        height: 8px;
+        background-color: #f5f5f5;
+    }
+
+    #heatmap::-webkit-scrollbar-thumb {
+        background-color: #4B9CD3;
+        border-radius: 4px;
+    }
+
+    #heatmap::-webkit-scrollbar-track {
+        background-color: #f5f5f5;
+        border-radius: 4px;
+    }
+
+    #heatmap svg {
+        max-width: none; /* Allow SVG to maintain its dimensions */
+        height: 100%; /* Fill container height */
+        min-height: 600px; /* Match container */
+    }
+
+    /* Make year selector more prominent on mobile */
+    #year-select {
+        width: 90%;
+        margin: 1rem auto;
+        display: block;
+    }
+    #radial-chart {
+        width: 95vw;
+        max-width: 95vw;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    #radial-chart svg {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Ensure container fits */
+    #radial-time-chart {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 2rem auto;
+    }
+    /* Navigation styles to make a hamburger menu on mobile */
+    .header-container nav {
+        position: relative;
+    }
+
+    .header-container nav a {
+        display: none; /* Hide nav links by default */
+    }
+
+    /* Hamburger icon */
+    .header-container nav::before {
+        content: '☰';
+        display: block;
+        position: absolute;
+        right: 20px;
+        top: -40px;
+        font-size: 1.5rem;
+        color: white;
+        cursor: pointer;
+    }
+
+    /* Show menu when nav has active class */
+    .header-container nav.active a {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        background: white;
+    }
+
+    .header-container nav.active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: pink;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+}

@@ -80,3 +80,10 @@ $(document).ready(function() {
         });
     });
 });
+
+// function to make hamburger menu work
+document.querySelector('.header-container nav').addEventListener('click', function(e) {
+    if (e.target.tagName === 'NAV' || e.target === this) {
+        this.classList.toggle('active');
+    }
+});
